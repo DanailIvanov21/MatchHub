@@ -1,3 +1,0 @@
-2|Basketball|Intermediate|2025-07-07|12:00|130|12|wwwwwwwww
-3|Tennis|Advanced|2025-07-08|12:00|124|22|wwwwwwww
-4|Football|Intermediate|2025-07-05|12:00|21|12|eeeeeeeeeee
