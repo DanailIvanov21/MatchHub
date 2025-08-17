@@ -30,19 +30,19 @@ class Event
 private:
 	SportType sport;
 	SkillLevel level;
-	std::chrono::system_clock::time_point when{};
+	std::tm when;
 	int duration;
 	int maxPlayers;
 	std::string fieldName;
 public:
 	Event() = default;
 	Event(SportType sport, SkillLevel level, 
-		const std::chrono::system_clock::time_point& when,
+		const std::tm& when,
 		int duration, int maxPlayers, const std::string& fieldName);
 
 	SportType getSport() const;
 	SkillLevel getLevel() const;
-	const std::chrono::system_clock::time_point& getWhen() const;
+	const std::tm& getWhen() const;
 	int getDuration() const;
 	int getMaxPlayers() const;
 	const std::string getFieldName() const;
@@ -52,9 +52,9 @@ public:
 	static bool readEvent(std::istringstream& iss, Event& out);
 	static bool parseDataTime(const std::string& dateStr,
 		const std::string& timeStr,
-		std::chrono::system_clock::time_point& out);
-	static std::string formatDate(const std::chrono::system_clock::time_point& tp);
-	static std::string formatTime(const std::chrono::system_clock::time_point& tp);
+		std::tm& out);
+	static std::string formatDate(const std::tm& tp);
+	static std::string formatTime(const std::tm& tp);
 
 	void printEvent(int id) const;
 };

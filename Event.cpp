@@ -16,7 +16,6 @@ std::string sportToString(SportType s)
     default:
         return "Football";
     }
-
 }
 
 std::string skillToString(SkillLevel l)
@@ -35,46 +34,48 @@ std::string skillToString(SkillLevel l)
 
 bool parseSport(const std::string& s, SportType& out)
 {
+    bool result = false;
+
     if (s == "Football" || s == "0") {
         out = SportType::Football;
-        return true;
+        result = true;
     } 
     else if (s == "Basketball" || s == "1") {
         out = SportType::Basketball;
-        return true;
+        result = true;
     } 
     else if (s == "Tennis" || s == "2") {
         out = SportType::Tennis;
-        return true;
+        result = true;
     }
-    else {
-        return false;
-    }
+    
+    return result;
 }
 
 bool parseSkill(const std::string& s, SkillLevel& out)
 {
+    bool result = false;
+
     if (s == "Beginner" || s == "0"){
         out = SkillLevel::Beginner;
-        return true;
+        result = true;
     }
     else if (s == "Intermediate" || s == "1") {
         out = SkillLevel::Intermediate;
-        return true;
+        result = true;
     }
     else if (s == "Advanced" || s == "2") {
         out = SkillLevel::Advanced;
-        return true;
+        result = true;
     }
-    else {
-        return false;
-    }
+    
+    return result;
 }
 
 Event::Event(SportType sport, SkillLevel level, 
-    const std::chrono::system_clock::time_point& when_,
+    const std::tm& when,
     int duration, int maxPlayers, const std::string& fieldName) 
-    :sport(sport), level(level), when(when_),
+    :sport(sport), level(level), when(when),
     duration(duration),
     maxPlayers(maxPlayers), fieldName(fieldName)
 {}
@@ -89,7 +90,7 @@ SkillLevel Event::getLevel() const
     return level;
 }
 
-const std::chrono::system_clock::time_point& Event::getWhen() const
+const std::tm& Event::getWhen() const
 {
     return when;
 }
@@ -164,7 +165,7 @@ bool Event::readEvent(std::istringstream& iss, Event& out)
     catch (...) {
         return false;
     }
-    std::chrono::system_clock::time_point tp;
+    std::tm tp;
     if (!Event::parseDataTime(dateStr, timeStr, tp))
     {
         return false;
@@ -206,7 +207,7 @@ static bool parseHM(const std::string& hm, int& H, int& Min) {
 }
 
 bool Event::parseDataTime(const std::string& dateStr, const std::string& timeStr, 
-    std::chrono::system_clock::time_point& out)
+    std::tm& out)
 {
     int Y, M, D, H, Min;
     if (!parseYMD(dateStr, Y, M, D)) {
@@ -216,40 +217,28 @@ bool Event::parseDataTime(const std::string& dateStr, const std::string& timeStr
         return false;
     }
     std::tm tm{};
-    tm.tm_year = Y - 1900;
-    tm.tm_mon = M - 1;
-    tm.tm_mday = D;
-    tm.tm_hour = H;
-    tm.tm_min = Min;
-    tm.tm_sec = 0;
-    tm.tm_isdst = -1; //sistemata reshava
+    out.tm_year = Y - 1900;
+    out.tm_mon = M - 1;
+    out.tm_mday = D;
+    out.tm_hour = H;
+    out.tm_min = Min;
+    out.tm_sec = 0;
+    out.tm_isdst = -1;
 
-    std::time_t tt = std::mktime(&tm);
-    if (tt == -1) {
-        return false;
-    }
-
-    out = std::chrono::system_clock::from_time_t(tt);
     return true;
 }
 
-std::string Event::formatDate(const std::chrono::system_clock::time_point& tp)
+std::string Event::formatDate(const std::tm& tp)
 {
-    std::time_t tt = std::chrono::system_clock::to_time_t(tp);
-    std::tm tm{};
-    localtime_s(&tm,&tt);
     std::ostringstream oss;
-    oss << std::put_time(&tm, "%Y-%m-%d");
+    oss << std::put_time(&tp, "%Y-%m-%d");
     return oss.str();
 }
 
-std::string Event::formatTime(const std::chrono::system_clock::time_point& tp)
+std::string Event::formatTime(const std::tm& tp)
 {
-    std::time_t tt = std::chrono::system_clock::to_time_t(tp);
-    std::tm tm{};
-    localtime_s(&tm, &tt);
     std::ostringstream oss;
-    oss << std::put_time(&tm, "%H:%M");
+    oss << std::put_time(&tp, "%H:%M");
     return oss.str();
 }
 

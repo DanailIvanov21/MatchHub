@@ -41,7 +41,7 @@ int main()
             std::cin.ignore();
             std::getline(std::cin, field);
 
-            std::chrono::system_clock::time_point tp;
+            std::tm tp;
             if (!Event::parseDataTime(date, time, tp)) {
                 std::cout << "Invalid date ot time\n";
                 return -1;

@@ -109,7 +109,8 @@ void EventManager::reconstructPastFromAll()
         if (!Event::readEvent(iss, e)) {
             continue;
         }
-        if (e.getWhen() < now && activeEvents.find(id) ==
+
+        if (validateEventPast(e,now) && activeEvents.find(id) ==
             activeEvents.end()) {
             allHistoryEvents[id] = e;
         }
@@ -127,7 +128,7 @@ EventManager::EventManager(const std::string& activeFile, const std::string& all
 }
 
 int EventManager::addEvent(SportType sport, SkillLevel level,
-    const std::chrono::system_clock::time_point& when, 
+    const std::tm& when, 
     int duration, int maxPlayers, const std::string& fieldName)
 {
     Event e(sport, level, when, duration, maxPlayers, fieldName);
@@ -145,7 +146,8 @@ bool EventManager::removeEvent(int id, Player& player)
     }
     //ako e minal eventa se dobawq v past
     auto now = std::chrono::system_clock::now();
-    if (it->second.getWhen() < now) {
+
+    if (validateEventPast(it->second, now)) {
         allHistoryEvents[id] = it->second;
     }
     
@@ -207,4 +209,12 @@ void EventManager::onExitSave() const
     active.close();
     allPast.close();
 
+}
+
+bool EventManager::validateEventPast(const Event& e, std::chrono::time_point<std::chrono::system_clock>& now)
+{
+    std::tm tp = e.getWhen();
+    auto from_tp = std::chrono::system_clock::from_time_t(std::mktime(&tp));
+
+    return from_tp < now;
 }

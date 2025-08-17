@@ -28,7 +28,7 @@ public:
 		const std::string& allFile = "all.txt");
 
 	int addEvent(SportType sport, SkillLevel level,
-		const std::chrono::system_clock::time_point& when,
+		const std::tm& when,
 		int duration, int maxPlayers,
 		const std::string& fieldName);
 
@@ -38,6 +38,6 @@ public:
 	void printPast(std::ostream& os = std::cout) const;
 	void printAll(std::ostream& os = std::cout) const;
 	void onExitSave() const;
-
+	static bool validateEventPast(const Event& e, std::chrono::time_point<std::chrono::system_clock>& now);
 };
 
