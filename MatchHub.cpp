@@ -76,7 +76,7 @@ int main()
         }
         else if (strcmp(command, "getActiveEvent") == 0) {
             int id;
-            std::cout << "ID event for remove: ";
+            std::cout << "ID event: ";
             std::cin >> id;
 
             Event* e = manager.getActiveEvent(id);
